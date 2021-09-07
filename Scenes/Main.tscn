@@ -1,0 +1,122 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Images/rainbow tokens.png" type="Texture" id=1]
+[ext_resource path="res://Images/pink gradient background.jpg" type="Texture" id=2]
+[ext_resource path="res://Images/dark and light tiles (1).png" type="Texture" id=3]
+[ext_resource path="res://Misc/ARCADECLASSIC.TTF" type="DynamicFontData" id=4]
+[ext_resource path="res://Scripts/TokenRain.gd" type="Script" id=5]
+[ext_resource path="res://Scripts/BigText.gd" type="Script" id=6]
+[ext_resource path="res://Scripts/TileMap.gd" type="Script" id=7]
+
+[sub_resource type="TileSet" id=1]
+0/name = "dark and light tiles (1).png 0"
+0/texture = ExtResource( 3 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 384, 128 )
+0/tile_mode = 2
+0/autotile/icon_coordinate = Vector2( 0, 0 )
+0/autotile/tile_size = Vector2( 128, 128 )
+0/autotile/spacing = 0
+0/autotile/occluder_map = [  ]
+0/autotile/navpoly_map = [  ]
+0/autotile/priority_map = [  ]
+0/autotile/z_index_map = [  ]
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
+
+[sub_resource type="CanvasItemMaterial" id=2]
+particles_animation = true
+particles_anim_h_frames = 8
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticlesMaterial" id=3]
+emission_shape = 2
+emission_box_extents = Vector3( 448, 32, 1 )
+flag_disable_z = true
+gravity = Vector3( 0, 400, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 0.5
+anim_offset = 0.1
+
+[sub_resource type="DynamicFont" id=4]
+size = 100
+outline_size = 5
+font_data = ExtResource( 4 )
+
+[node name="Main" type="Node2D"]
+
+[node name="Background" type="TextureRect" parent="."]
+margin_top = -128.0
+margin_right = 896.0
+margin_bottom = 768.0
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource( 1 )
+cell_size = Vector2( 128, 128 )
+format = 1
+tile_data = PoolIntArray( -65536, 0, 2, -65535, 0, 2, -65534, 0, 2, -65533, 0, 2, -65532, 0, 2, -65531, 0, 2, -65530, 0, 2, 0, 0, 1, 1, 0, 0, 2, 0, 1, 3, 0, 0, 4, 0, 1, 5, 0, 0, 6, 0, 1, 65536, 0, 0, 65537, 0, 1, 65538, 0, 0, 65539, 0, 1, 65540, 0, 0, 65541, 0, 1, 65542, 0, 0, 131072, 0, 1, 131073, 0, 0, 131074, 0, 1, 131075, 0, 0, 131076, 0, 1, 131077, 0, 0, 131078, 0, 1, 196608, 0, 0, 196609, 0, 1, 196610, 0, 0, 196611, 0, 1, 196612, 0, 0, 196613, 0, 1, 196614, 0, 0, 262144, 0, 1, 262145, 0, 0, 262146, 0, 1, 262147, 0, 0, 262148, 0, 1, 262149, 0, 0, 262150, 0, 1, 327680, 0, 0, 327681, 0, 1, 327682, 0, 0, 327683, 0, 1, 327684, 0, 0, 327685, 0, 1, 327686, 0, 0 )
+script = ExtResource( 7 )
+
+[node name="MoveTimer" type="Timer" parent="TileMap"]
+wait_time = 0.5
+
+[node name="TokenRain" type="Particles2D" parent="."]
+material = SubResource( 2 )
+position = Vector2( 448, -192 )
+emitting = false
+amount = 25
+lifetime = 3.0
+process_material = SubResource( 3 )
+texture = ExtResource( 1 )
+script = ExtResource( 5 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 448, 320 )
+current = true
+
+[node name="BigText" type="Label" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 400.0
+margin_top = 250.0
+margin_right = 500.0
+margin_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 100, 100 )
+rect_pivot_offset = Vector2( 50, 50 )
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+text = "Hello"
+align = 1
+valign = 1
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BlinkTimer" type="Timer" parent="BigText"]
+wait_time = 0.5
+
+[connection signal="game_won" from="TileMap" to="TokenRain" method="_on_TileMap_game_won"]
+[connection signal="game_won" from="TileMap" to="BigText" method="_on_TileMap_game_won"]
+[connection signal="timeout" from="TileMap/MoveTimer" to="TileMap" method="_on_MoveTimer_timeout"]
+[connection signal="timeout" from="BigText/BlinkTimer" to="BigText" method="_on_BlinkTimer_timeout"]
